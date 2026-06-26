@@ -1,7 +1,7 @@
 # Pilot — Personal AI Planner
 
 A full-stack Python web app (Flask backend + HTML/CSS/JS frontend, JSON storage)
-implementing every module on your checklist:
+implementing every module onn your checklist:
 
 - 🎯 Goal Management — create goals with deadline, importance, target hours
 - 📋 Daily Task System — schedule, complete, delete tasks; can link to a goal
