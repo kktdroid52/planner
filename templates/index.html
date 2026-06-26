@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pilot — Personal AI Planner</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="app">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="brand-mark">◆</span>
+      <span class="brand-name">Pilot</span>
+    </div>
+
+    <nav class="nav">
+      <button class="nav-item active" data-view="dashboard"><span class="ico">⌘</span>Dashboard</button>
+      <button class="nav-item" data-view="goals"><span class="ico">◎</span>Goals</button>
+      <button class="nav-item" data-view="tasks"><span class="ico">▢</span>Tasks</button>
+      <button class="nav-item" data-view="calendar"><span class="ico">▦</span>Calendar</button>
+      <button class="nav-item" data-view="commitments"><span class="ico">▣</span>School &amp; Tuition</button>
+      <button class="nav-item" data-view="habits"><span class="ico">◐</span>Habits</button>
+      <button class="nav-item" data-view="smart"><span class="ico">✦</span>Smart Planner</button>
+      <button class="nav-item" data-view="reports"><span class="ico">▤</span>Reports</button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="streak-chip">
+        <span class="flame">🔥</span>
+        <div>
+          <div class="streak-num" id="sidebarStreak">0</div>
+          <div class="streak-label">day streak</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+    <header class="topbar">
+      <div class="topbar-title" id="viewTitle">Dashboard</div>
+      <div class="topbar-right">
+        <button class="bell" id="bellBtn">🔔 <span id="reminderCount" class="reminder-count">0</span></button>
+      </div>
+    </header>
+
+    <div id="reminderPanel" class="reminder-panel hidden"></div>
+
+    <div class="content">
+
+      <!-- DASHBOARD -->
+      <section id="view-dashboard" class="view active">
+        <div class="grid stats-grid">
+          <div class="card stat">
+            <div class="stat-label">Active goals</div>
+            <div class="stat-value" id="statActiveGoals">0</div>
+          </div>
+          <div class="card stat">
+            <div class="stat-label">Completed goals</div>
+            <div class="stat-value" id="statCompletedGoals">0</div>
+          </div>
+          <div class="card stat">
+            <div class="stat-label">Hours logged total</div>
+            <div class="stat-value" id="statHours">0</div>
+          </div>
+          <div class="card stat">
+            <div class="stat-label">Today's tasks</div>
+            <div class="stat-value"><span id="statTodayDone">0</span><span class="stat-of">/ <span id="statTodayTotal">0</span></span></div>
+          </div>
+          <div class="card stat accent">
+            <div class="stat-label">Current streak</div>
+            <div class="stat-value" id="statStreak">0 🔥</div>
+          </div>
+          <div class="card stat accent">
+            <div class="stat-label">Best streak</div>
+            <div class="stat-value" id="statBestStreak">0 🏆</div>
+          </div>
+        </div>
+
+        <div class="grid two-col">
+          <div class="card">
+            <h3>Priority pulse <span class="muted">— goals ranked by urgency</span></h3>
+            <div id="priorityPulse" class="pulse-list"></div>
+          </div>
+          <div class="card">
+            <h3>Recommended next move</h3>
+            <div id="recommendation" class="recommendation"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- GOALS -->
+      <section id="view-goals" class="view">
+        <div class="section-head">
+          <h2>Goals</h2>
+          <button class="btn primary" id="newGoalBtn">+ New goal</button>
+        </div>
+        <div id="goalsList" class="goals-list"></div>
+      </section>
+
+      <!-- TASKS -->
+      <section id="view-tasks" class="view">
+        <div class="section-head">
+          <h2>Daily Tasks</h2>
+          <div class="head-actions">
+            <input type="date" id="taskDateFilter">
+            <button class="btn primary" id="newTaskBtn">+ New task</button>
+          </div>
+        </div>
+        <div id="tasksList" class="tasks-list"></div>
+      </section>
+
+      <!-- CALENDAR -->
+      <section id="view-calendar" class="view">
+        <div class="section-head">
+          <h2>Calendar &amp; Scheduling</h2>
+          <div class="head-actions">
+            <button class="btn" id="weekPrevBtn">‹ prev</button>
+            <button class="btn" id="weekTodayBtn">this week</button>
+            <button class="btn" id="weekNextBtn">next ›</button>
+          </div>
+        </div>
+        <div id="weekCalendar" class="week-calendar"></div>
+      </section>
+
+      <!-- COMMITMENTS -->
+      <section id="view-commitments" class="view">
+        <div class="section-head">
+          <h2>School, Tuition &amp; Fixed Commitments</h2>
+          <button class="btn primary" id="newCommitmentBtn">+ Add commitment</button>
+        </div>
+        <p class="muted">These block out occupied time so goals &amp; tasks only get scheduled into free slots.</p>
+        <div id="commitmentsList" class="commitments-list"></div>
+      </section>
+
+      <!-- HABITS -->
+      <section id="view-habits" class="view">
+        <div class="section-head">
+          <h2>Habit Tracker</h2>
+          <button class="btn primary" id="newHabitBtn">+ New habit</button>
+        </div>
+        <div id="habitsList" class="habits-list"></div>
+      </section>
+
+      <!-- SMART PLANNER -->
+      <section id="view-smart" class="view">
+        <div class="section-head">
+          <h2>Smart Planner</h2>
+          <button class="btn" id="refreshSmartBtn">↻ Refresh</button>
+        </div>
+
+        <div class="grid two-col">
+          <div class="card">
+            <h3>Priority ranking</h3>
+            <p class="muted">Scored on deadline proximity, importance and remaining workload.</p>
+            <div id="smartPriorities" class="pulse-list"></div>
+          </div>
+          <div class="card">
+            <h3>Suggested time blocks — today</h3>
+            <div id="smartSchedule" class="schedule-blocks"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Weekly hours needed per goal</h3>
+          <div id="weeklyHoursTable"></div>
+        </div>
+      </section>
+
+      <!-- REPORTS -->
+      <section id="view-reports" class="view">
+        <div class="section-head">
+          <h2>Weekly Report</h2>
+        </div>
+        <div class="grid stats-grid">
+          <div class="card stat"><div class="stat-label">Tasks scheduled</div><div class="stat-value" id="repScheduled">0</div></div>
+          <div class="card stat"><div class="stat-label">Tasks completed</div><div class="stat-value" id="repCompleted">0</div></div>
+          <div class="card stat"><div class="stat-label">Completion rate</div><div class="stat-value" id="repRate">0%</div></div>
+          <div class="card stat"><div class="stat-label">Hours worked</div><div class="stat-value" id="repHours">0</div></div>
+        </div>
+        <div class="grid two-col">
+          <div class="card">
+            <h3>Top goal this week</h3>
+            <div id="repTopGoal" class="recommendation"></div>
+          </div>
+          <div class="card">
+            <h3>Daily breakdown</h3>
+            <div id="repDaily" class="daily-breakdown"></div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+<!-- Modal -->
+<div id="modalOverlay" class="modal-overlay hidden">
+  <div class="modal" id="modalBox"></div>
+</div>
+
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
