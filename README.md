@@ -73,7 +73,7 @@ Delete the `data/` folder at any time to start completely fresh.
    the checkmark each day to build a streak.
 6. Check the **Dashboard** daily — it shows your streak, reminders, and the
    single thing the AI recommends you work on next.
-7. Check **Reports** weekly for your completion rate and top goal.
+7. Check **Reports** weekly for your completion rate and top gsoal.
 
 ## 5. Project structure
 
